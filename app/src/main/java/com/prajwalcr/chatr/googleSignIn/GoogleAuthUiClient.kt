@@ -11,13 +11,12 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.prajwalcr.chatr.BuildConfig
 import com.prajwalcr.chatr.ui.screens.SignInViewModel
-import com.prajwalcr.domain.model.SignInResult
 import com.prajwalcr.domain.model.UserData
+import com.prajwalcr.domain.utils.Resource
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 
 class GoogleAuthUiClient(
-    private val context: Context,
     private val oneTapClient: SignInClient,
     private val signInViewModel: SignInViewModel
 ) {
@@ -47,7 +46,7 @@ class GoogleAuthUiClient(
             .build()
     }
 
-    private fun signInWithIntent(intent: Intent): SignInResult {
+    suspend fun signInWithIntent(intent: Intent): Resource<UserData> {
         signInViewModel.resetState()
 
         val cred = oneTapClient.getSignInCredentialFromIntent(intent)
@@ -56,18 +55,19 @@ class GoogleAuthUiClient(
 
         return try {
             val user = auth.signInWithCredential(googleCred).await().user
-
-            SignInResult (
-                userData = UserData(
-
+            val userData = user?.let {
+                UserData(
+                    email = it.email.toString(),
+                    userId = it.uid,
+                    userName = it.displayName.toString(),
+                    profileUrl = it.photoUrl.toString().substring(0,it.photoUrl.toString().length - 6)
                 )
-            )
+            }
+            Resource.Success(userData)
         } catch (ex: Exception) {
             ex.printStackTrace()
             if (ex is CancellationException) throw ex
-            SignInResult(
-
-            )
+            Resource.Error(ex)
         }
     }
 }

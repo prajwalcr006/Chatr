@@ -1,6 +1,8 @@
 package com.prajwalcr.chatr.ui.screens
 
-class SignInViewModel {
+import androidx.lifecycle.ViewModel
+
+class SignInViewModel(): ViewModel() {
     fun resetState() {
 
     }

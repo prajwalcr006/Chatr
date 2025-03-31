@@ -25,13 +25,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.prajwalcr.chatr.R
 
 @Composable
-@Preview
-fun SignInScreen() {
+fun SignInScreen(onSignInClick: () -> Unit) {
     val customBrush = Brush.linearGradient(
         colors = listOf(
             Color(0xC0C0C0),
@@ -70,7 +70,7 @@ fun SignInScreen() {
             Spacer(modifier = Modifier.height(80.dp))
 
             Button(
-                onClick = {},
+                onClick = onSignInClick,
                 modifier = Modifier
                     .background(
                         brush = customBrush
