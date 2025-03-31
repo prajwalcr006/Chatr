@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val FIREBASE_WEB_CLIENT_ID: String by rootProject.extra
@@ -87,5 +88,9 @@ dependencies {
     //Koin
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+
+    //navigation compose
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
 
 }

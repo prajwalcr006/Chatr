@@ -70,4 +70,14 @@ class GoogleAuthUiClient(
             Resource.Error(ex)
         }
     }
+
+    fun getSignInDetails(): UserData? = auth.currentUser?.run {
+        UserData(
+            email = email.toString(),
+            userId = uid,
+            userName = displayName.toString(),
+            profileUrl = photoUrl.toString().substring(0,photoUrl.toString().length - 6)
+        )
+
+    }
 }
