@@ -27,15 +27,18 @@ import com.prajwalcr.chatr.ui.navigation.SplashScreenRoute
 import com.prajwalcr.chatr.ui.screens.ChatScreen
 import com.prajwalcr.chatr.ui.screens.SignInScreen
 import com.prajwalcr.chatr.ui.screens.SignInViewModel
-import com.prajwalcr.domain.model.AppState
-import com.prajwalcr.domain.model.UserData
 import com.prajwalcr.domain.utils.Resource
 import com.prajwalcr.dummy.ui.theme.ChatrTheme
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 class MainActivity : ComponentActivity(), KoinComponent {
+
+    companion object {
+        const val TAG = "MainActivity"
+    }
 
     private val signInViewModel: SignInViewModel by inject()
     private val mainViewModel: MainViewModel by inject()
@@ -81,13 +84,18 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                                     )
                                                     when (signInResult) {
                                                         is Resource.Success -> {
-                                                            navController.navigate(ChatScreenRoute)
+                                                            mainViewModel.onSignInResult(signInResult.data)
+                                                            signInResult.data?.let {
+                                                                mainViewModel.sendUserDetailsToFirebase(it)
+                                                            }
                                                         }
                                                         is Resource.Error -> {
-
+                                                            Timber.tag(TAG).e("User sign in failed!! message: ${signInResult.error}")
                                                         }
 
-                                                        is Resource.Loading -> TODO()
+                                                        is Resource.Loading -> {
+
+                                                        }
                                                     }
                                                 }
                                             }

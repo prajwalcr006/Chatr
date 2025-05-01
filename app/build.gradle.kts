@@ -55,7 +55,7 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":di"))
     implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
@@ -92,5 +92,8 @@ dependencies {
     //navigation compose
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+
+    //Timber
+    implementation(libs.timber)
 
 }
