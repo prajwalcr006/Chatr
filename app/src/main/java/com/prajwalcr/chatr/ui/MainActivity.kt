@@ -20,6 +20,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.FirebaseApp
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
 import com.prajwalcr.chatr.googleSignIn.GoogleAuthUiClient
 import com.prajwalcr.chatr.ui.navigation.ChatScreenRoute
 import com.prajwalcr.chatr.ui.navigation.SignInScreenRoute
@@ -27,6 +30,7 @@ import com.prajwalcr.chatr.ui.navigation.SplashScreenRoute
 import com.prajwalcr.chatr.ui.screens.ChatScreen
 import com.prajwalcr.chatr.ui.screens.SignInScreen
 import com.prajwalcr.chatr.ui.screens.SignInViewModel
+import com.prajwalcr.chatr.ui.screens.home.HomeScreen
 import com.prajwalcr.domain.utils.Resource
 import com.prajwalcr.dummy.ui.theme.ChatrTheme
 import kotlinx.coroutines.launch
@@ -115,7 +119,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                             }
 
                             composable<ChatScreenRoute> {
-                                ChatScreen()
+                                HomeScreen(navController)
                             }
                         }
 
