@@ -4,4 +4,5 @@ import com.prajwalcr.domain.model.Channel
 
 interface FirebaseDatabaseRepository {
     suspend fun getChannels(): List<Channel>
+    suspend fun addChannel(channelName: String): Boolean
 }

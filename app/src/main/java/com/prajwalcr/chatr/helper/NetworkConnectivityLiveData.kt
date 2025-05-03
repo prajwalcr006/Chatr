@@ -61,7 +61,7 @@ class NetworkConnectivityLiveData: LiveData<NetworkConnectivityLiveData.NetworkS
     private fun getInternetConnectivityStatus(): NetworkStatus {
         return try {
             val socket = Socket()
-            socket.connect(InetSocketAddress("8.8.8.8",53),1500)
+            socket.connect(InetSocketAddress("  ",53),1500)
             socket.close()
             NetworkStatus.NETWORK_CONNECTIVITY_AVAILABLE
         } catch (ex: Exception) {

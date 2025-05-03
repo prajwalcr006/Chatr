@@ -60,8 +60,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -96,5 +94,13 @@ dependencies {
 
     //Timber
     implementation(libs.timber)
+
+    //Jetpack Compose
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.material3)
+    implementation(libs.ui)
+    implementation(libs.androidx.runtime)
+    implementation(libs.material.v120)
 
 }

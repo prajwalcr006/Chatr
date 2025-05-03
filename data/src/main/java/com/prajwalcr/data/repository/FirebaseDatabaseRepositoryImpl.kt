@@ -13,6 +13,7 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
 
     companion object {
         const val UNKNOWN_DATABASE_KEY = "Unknown"
+        const val CHANNEL_PATH = "channel"
     }
 
     private val database by lazy {
@@ -26,7 +27,7 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
 
     override suspend fun getChannels(): List<Channel> {
         val channelList= suspendCoroutine<List<Channel>> { continuation ->
-            database?.getReference("channel")?.get()
+            database?.getReference(CHANNEL_PATH)?.get()
                 ?.addOnSuccessListener {
                     val channelList = it.children.map { data ->
                         Channel(
@@ -42,5 +43,16 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
                 }
         }
         return channelList
+    }
+
+    override suspend fun addChannel(channelName: String): Boolean {
+        return suspendCoroutine { continuation ->
+            val key = database?.getReference(CHANNEL_PATH)?.push()?.key
+            key?.let {
+                database?.getReference(CHANNEL_PATH)?.child(it)?.setValue(channelName)
+                    ?.addOnSuccessListener { continuation.resume(true) }
+                    ?.addOnFailureListener { continuation.resume(false) }
+            } ?: continuation.resume(false)
+        }
     }
 }
