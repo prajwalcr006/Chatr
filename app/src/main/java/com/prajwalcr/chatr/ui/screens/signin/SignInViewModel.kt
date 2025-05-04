@@ -1,4 +1,4 @@
-package com.prajwalcr.chatr.ui.screens
+package com.prajwalcr.chatr.ui.screens.signin
 
 import androidx.lifecycle.ViewModel
 

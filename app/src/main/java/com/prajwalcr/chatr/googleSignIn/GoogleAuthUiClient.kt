@@ -1,6 +1,5 @@
 package com.prajwalcr.chatr.googleSignIn
 
-import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
@@ -10,7 +9,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.prajwalcr.chatr.BuildConfig
-import com.prajwalcr.chatr.ui.screens.SignInViewModel
+import com.prajwalcr.chatr.ui.screens.signin.SignInViewModel
 import com.prajwalcr.domain.model.UserData
 import com.prajwalcr.domain.utils.Resource
 import kotlinx.coroutines.CancellationException
