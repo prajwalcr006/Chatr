@@ -3,8 +3,8 @@ package com.prajwalcr.chatr.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.prajwalcr.domain.model.Channel
-import com.prajwalcr.domain.usecase.AddChannelUseCase
-import com.prajwalcr.domain.usecase.GetChannelsUseCase
+import com.prajwalcr.domain.usecase.channel.AddChannelUseCase
+import com.prajwalcr.domain.usecase.channel.GetChannelsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update

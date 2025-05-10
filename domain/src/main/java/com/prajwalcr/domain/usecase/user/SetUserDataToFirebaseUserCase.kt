@@ -1,4 +1,4 @@
-package com.prajwalcr.domain.usecase
+package com.prajwalcr.domain.usecase.user
 
 import com.prajwalcr.domain.model.UserData
 import com.prajwalcr.domain.repository.FirestoreRepository

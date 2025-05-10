@@ -8,5 +8,5 @@ interface FirebaseDatabaseRepository {
     suspend fun getChannels(): List<Channel>
     suspend fun addChannel(channelName: String): Boolean
     suspend fun listenForMessages(channelId: String): Flow<List<Message>>
-    suspend fun sendMessage(message: Message): Boolean
+    suspend fun sendMessage(channelId: String, messageText: String)
 }

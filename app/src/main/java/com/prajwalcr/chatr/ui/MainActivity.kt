@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                             composable<SplashScreenRoute> {
                                 LaunchedEffect(Unit) {
                                     val data = googleAuthUiClient.getSignInDetails()
-                                    if (data == null) {
+                                    if (data != null) {
                                         navController.navigate(ChatScreenRoute)
                                     } else {
                                         navController.navigate(SignInScreenRoute)
@@ -85,6 +85,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                                         is Resource.Success -> {
                                                             mainViewModel.onSignInResult(signInResult.data)
                                                             signInResult.data?.let {
+                                                                //TODO: CHANGE IT TO PERSISTENT CACHE
+
                                                                 mainViewModel.sendUserDetailsToFirebase(it)
                                                             }
                                                         }

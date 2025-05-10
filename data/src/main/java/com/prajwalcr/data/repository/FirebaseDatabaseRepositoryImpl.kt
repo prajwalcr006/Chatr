@@ -8,20 +8,26 @@ import com.google.firebase.database.database
 import com.prajwalcr.domain.Constants.firebaseDatabaseUrl
 import com.prajwalcr.domain.model.Channel
 import com.prajwalcr.domain.model.Message
+import com.prajwalcr.domain.repository.FirebaseAuthRepository
 import com.prajwalcr.domain.repository.FirebaseDatabaseRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import timber.log.Timber
+import java.util.UUID
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
+class FirebaseDatabaseRepositoryImpl(
+    private val firebaseAuthRepository: FirebaseAuthRepository
+): FirebaseDatabaseRepository {
 
     companion object {
-        const val UNKNOWN_DATABASE_KEY = "Unknown"
+        const val UNKNOWN_FIELD = "Unknown"
         const val CHANNEL_PATH = "channel"
-        const val MESSAGE_PATH = "message"
+        const val MESSAGE_PATH = "messages"
         const val TIME = "createdAt"
     }
 
@@ -34,13 +40,17 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
         }
     }
 
+    private fun getMessagesDatabaseReference() = database?.getReference(MESSAGE_PATH)
+
+    private fun getChannelsDatabaseReference() = database?.getReference(CHANNEL_PATH)
+
     override suspend fun getChannels(): List<Channel> {
         val channelList= suspendCoroutine<List<Channel>> { continuation ->
             database?.getReference(CHANNEL_PATH)?.get()
                 ?.addOnSuccessListener {
                     val channelList = it.children.map { data ->
                         Channel(
-                            data.key ?: UNKNOWN_DATABASE_KEY,
+                            data.key ?: UNKNOWN_FIELD,
                             data.value.toString()
                         )
                     }
@@ -56,7 +66,7 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
 
     override suspend fun addChannel(channelName: String): Boolean {
         return suspendCoroutine { continuation ->
-            val key = database?.getReference(CHANNEL_PATH)?.push()?.key
+            val key = getChannelsDatabaseReference()?.push()?.key
             key?.let {
                 database?.getReference(CHANNEL_PATH)?.child(it)?.setValue(channelName)
                     ?.addOnSuccessListener { continuation.resume(true) }
@@ -66,7 +76,7 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
     }
 
     override suspend fun listenForMessages(channelId: String): Flow<List<Message>> = callbackFlow {
-        val messageReference = database?.getReference(MESSAGE_PATH)?.child(channelId)?.orderByChild(TIME)
+        val messageReference = getMessagesDatabaseReference()?.child(channelId)?.orderByChild(TIME)
         val listener = object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val messageList : MutableList<Message> = mutableListOf()
@@ -97,9 +107,20 @@ class FirebaseDatabaseRepositoryImpl: FirebaseDatabaseRepository {
                 Timber.e("Exception in closing the message database listener. EX: $ex")
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override suspend fun sendMessage(message: Message): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun sendMessage(channelId: String, messageText: String) {
+        val key = getMessagesDatabaseReference()?.push()?.key
+        val userData = firebaseAuthRepository.getUserData()
+        val message = Message(
+            messageId = key ?: UUID.randomUUID().toString(),
+            text = messageText,
+            senderId = userData?.userId ?: UNKNOWN_FIELD,
+            senderName = userData?.userName ?: UNKNOWN_FIELD,
+            profileUrl = userData?.profileUrl,
+            createdAt = System.currentTimeMillis()
+        )
+
+        getMessagesDatabaseReference()?.child(channelId)?.push()?.setValue(message)
     }
 }

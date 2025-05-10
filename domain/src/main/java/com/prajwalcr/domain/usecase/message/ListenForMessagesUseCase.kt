@@ -1,4 +1,4 @@
-package com.prajwalcr.domain.usecase
+package com.prajwalcr.domain.usecase.message
 
 import com.prajwalcr.domain.model.Message
 import com.prajwalcr.domain.repository.FirebaseDatabaseRepository

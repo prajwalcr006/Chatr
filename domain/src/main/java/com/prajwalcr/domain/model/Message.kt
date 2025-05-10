@@ -5,6 +5,6 @@ data class Message(
     val text: String,
     val senderId: String,
     val senderName: String,
-    val profileUrl: String,
+    val profileUrl: String?,
     val createdAt: Long
 )

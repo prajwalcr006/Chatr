@@ -1,4 +1,4 @@
-package com.prajwalcr.domain.usecase
+package com.prajwalcr.domain.usecase.channel
 
 import com.prajwalcr.domain.repository.FirebaseDatabaseRepository
 import kotlinx.coroutines.Dispatchers
