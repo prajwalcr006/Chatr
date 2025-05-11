@@ -14,12 +14,7 @@ import timber.log.Timber
 
 class MainViewModel(
     private val setUserDataToFirebaseUserCase: SetUserDataToFirebaseUserCase,
-    private val inMemoryCacheStore: CacheStore
 ): ViewModel() {
-
-    companion object {
-        const val SIGNED_IN_USER_DATA = "userData"
-    }
 
     private val _appState: MutableStateFlow<AppState> = MutableStateFlow(AppState())
     val appState: StateFlow<AppState> = _appState
