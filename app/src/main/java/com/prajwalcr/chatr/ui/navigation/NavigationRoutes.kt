@@ -6,7 +6,10 @@ import kotlinx.serialization.Serializable
 object SignInScreenRoute
 
 @Serializable
-object ChatScreenRoute
+object HomeScreenRoute
 
 @Serializable
 object SplashScreenRoute
+
+@Serializable
+data class ChatScreenRoute(val channelId: String)

@@ -34,6 +34,8 @@ import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.prajwalcr.chatr.ui.navigation.ChatScreenRoute
+import com.prajwalcr.chatr.ui.screens.chat.ChatScreen
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -79,7 +81,9 @@ fun HomeScreen(navController: NavController) {
                                 .padding(8.dp)
                                 .clip(RoundedCornerShape(16.dp))
                                 .clickable {
-
+                                    channel.key?.let { channelId ->
+                                        navController.navigate(ChatScreenRoute(channelId))
+                                    }
                                 }
                                 .background(Color.Blue.copy(0.3f))
                                 .padding(16.dp)

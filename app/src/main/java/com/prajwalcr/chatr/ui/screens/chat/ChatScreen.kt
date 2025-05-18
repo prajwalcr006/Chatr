@@ -18,47 +18,55 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHost
 import com.prajwalcr.domain.model.Message
 import com.prajwalcr.domain.model.UserData
 import com.prajwalcr.domain.repository.FirebaseAuthRepository
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import timber.log.Timber
 
 @Composable
-fun ChatScreen(navHost: NavHost, channelId: String) {
+fun ChatScreen(channelId: String) {
 
     val messageText = remember {
         mutableStateOf("")
     }
 
+    var currentUserData = remember {
+        mutableStateOf<UserData?>(null)
+    }
+
     val chatViewModel: ChatViewModel = koinViewModel()
     val firebaseAuthRepository: FirebaseAuthRepository = koinInject()
     val messageList= chatViewModel.messages.collectAsState()
-    var currentUserData: UserData? = null
 
     LaunchedEffect(channelId) {
+        currentUserData.value = firebaseAuthRepository.getUserData()
         chatViewModel.listenForMessages(channelId)
-        currentUserData = firebaseAuthRepository.getUserData()
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn {
-            items(messageList.value) {
-                ChatBubble(message = it, currentUser = currentUserData!!)
+            Timber.d("messageList.value = ${messageList.value}")
+            Timber.tag("cptn_test").d("currentUser = $currentUserData")
+            items(messageList.value) { message ->
+                Timber.tag("cptn_test_inside").d("currentUser = $currentUserData")
+                currentUserData.value?.let { userData ->
+                    Timber.tag("cptn_test").d("message = $message && current user = $userData")
+                    ChatBubble(message = message, currentUser = userData)
+                }
             }
         }
 
         Row(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .background(color = Color.Gray)
                 .padding(8.dp)
                 .align(Alignment.BottomCenter)
@@ -91,9 +99,9 @@ fun ChatScreen(navHost: NavHost, channelId: String) {
 fun ChatBubble(message: Message, currentUser: UserData) {
     val isCurrentUser = message.senderId == currentUser.userId
     val bubbleColor = if (isCurrentUser) {
-        Color.Red
-    } else {
         Color.Green
+    } else {
+        Color.Red
     }
 
     Row(
@@ -101,9 +109,10 @@ fun ChatBubble(message: Message, currentUser: UserData) {
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 4.dp)
     ) {
-        val alignment = if (isCurrentUser) {Alignment.CenterStart} else {Alignment.CenterEnd}
+        val alignment = if (isCurrentUser) {Alignment.CenterEnd} else {Alignment.CenterStart}
 
         Box(
+            modifier = Modifier.fillMaxWidth(),
             contentAlignment = alignment
         ) {
             Box(

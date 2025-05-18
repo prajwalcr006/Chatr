@@ -19,7 +19,7 @@ val FirebaseModule = module {
         FirebaseDatabaseRepositoryImpl(get())
     }
 
-    single<FirebaseAuthRepository> { FirebaseAuthRepositoryImpl() }
+    single<FirebaseAuthRepository> { FirebaseAuthRepositoryImpl(get()) }
 
     single<CacheStore> { InMemoryCacheStore() }
 }

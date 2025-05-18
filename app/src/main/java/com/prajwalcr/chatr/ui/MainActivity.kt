@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -21,8 +20,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.identity.Identity
 import com.prajwalcr.chatr.googleSignIn.GoogleAuthUiClient
 import com.prajwalcr.chatr.ui.navigation.ChatScreenRoute
+import com.prajwalcr.chatr.ui.navigation.HomeScreenRoute
 import com.prajwalcr.chatr.ui.navigation.SignInScreenRoute
 import com.prajwalcr.chatr.ui.navigation.SplashScreenRoute
+import com.prajwalcr.chatr.ui.screens.chat.ChatScreen
 import com.prajwalcr.chatr.ui.screens.signin.SignInScreen
 import com.prajwalcr.chatr.ui.screens.signin.SignInViewModel
 import com.prajwalcr.chatr.ui.screens.home.HomeScreen
@@ -37,6 +38,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
     companion object {
         const val TAG = "MainActivity"
+        const val CHANNEL_ID = "channelId"
     }
 
     private val signInViewModel: SignInViewModel by inject()
@@ -51,7 +53,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        enableEdgeToEdge()
+        //enableEdgeToEdge()
 
         setContent {
             ChatrTheme {
@@ -65,7 +67,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 LaunchedEffect(Unit) {
                                     val data = googleAuthUiClient.getSignInDetails()
                                     if (data != null) {
-                                        navController.navigate(ChatScreenRoute)
+                                        navController.navigate(HomeScreenRoute)
                                     } else {
                                         navController.navigate(SignInScreenRoute)
                                     }
@@ -115,14 +117,19 @@ class MainActivity : ComponentActivity(), KoinComponent {
                                 })
                             }
 
-                            composable<ChatScreenRoute> {
+                            composable<HomeScreenRoute> {
                                 HomeScreen(navController)
+                            }
+
+                            composable<ChatScreenRoute> { navBackStackEntry ->
+                                val channelId = navBackStackEntry.arguments?.getString(CHANNEL_ID) ?: return@composable
+                                ChatScreen(channelId)
                             }
                         }
 
                         LaunchedEffect(appState) {
                             if (appState.isSignedIn) {
-                                navController.navigate(ChatScreenRoute)
+                                navController.navigate(HomeScreenRoute)
                             }
                         }
                     }

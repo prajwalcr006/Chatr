@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
 }
 
 val FIREBASE_WEB_CLIENT_ID: String by rootProject.extra
@@ -103,4 +104,7 @@ dependencies {
     implementation(libs.androidx.runtime)
     implementation(libs.material.v120)
 
+    //dagger
+    implementation(libs.dagger)
+    kapt(libs.dagger.compiler)
 }

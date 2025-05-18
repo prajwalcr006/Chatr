@@ -28,24 +28,26 @@ class FirebaseAuthRepositoryImpl(
     }
 
     override suspend fun getUserData(): UserData? {
-        return inMemoryCacheStore.get<UserData>(KEY_SIGNED_IN_USER_DATA)?.let {
-            auth?.currentUser?.run {
-                UserData(
-                    email = email.toString(),
-                    userId = uid,
-                    userName = displayName.toString(),
-                    profileUrl = photoUrl.toString().substring(0,photoUrl.toString().length - 6)
-                )
-            }.also { userData ->
-                userData?.let {
-                    inMemoryCacheStore.store(
-                        KEY_SIGNED_IN_USER_DATA,
-                        it,
-                        Duration.INFINITE
+        val userData = inMemoryCacheStore.get(KEY_SIGNED_IN_USER_DATA) ?: (
+                auth?.currentUser?.run {
+                    UserData(
+                        email = email.toString(),
+                        userId = uid,
+                        userName = displayName.toString(),
+                        profileUrl = photoUrl.toString().substring(0,photoUrl.toString().length - 6)
                     )
-                }
-            }
-        }
+                }.also { userData ->
+                    userData?.let {
+                        inMemoryCacheStore.store(
+                            KEY_SIGNED_IN_USER_DATA,
+                            it,
+                            Duration.INFINITE
+                        )
+                    }
+                })
+
+        Timber.d("userData is $userData")
+        return userData
     }
 
     override suspend fun getUserName(): String = getUserData()?.userName ?: UNKNOWN_FIELD

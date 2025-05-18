@@ -34,7 +34,7 @@ class InMemoryCacheStore: CacheStore {
                 null
             } else {
                 try {
-                    cache as T
+                    cache.cacheData as? T
                 } catch (ex: Exception) {
                     Timber.e("Error while casting cache data. EX: $ex")
                     null
