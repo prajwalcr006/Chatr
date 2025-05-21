@@ -107,4 +107,9 @@ dependencies {
     //dagger
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
+
+    //glide
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.compose)
 }
