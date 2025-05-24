@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -95,13 +96,13 @@ fun ChatScreen(channelId: String) {
             snapshotFlow { listState.layoutInfo.viewportEndOffset }
                 .distinctUntilChanged()
                 .collect {
-                    val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                    if (lastVisibleItem?.index != messageList.value.lastIndex) {
+                    if (listState.isScrolledToEnd()) {
                         listState.animateScrollToItem(messageList.value.lastIndex)
                     }
                 }
         }
     }
+
 
     Column(modifier = Modifier
         .fillMaxSize()
@@ -156,6 +157,12 @@ fun ChatScreen(channelId: String) {
             }
         }
     }
+}
+
+fun LazyListState.isScrolledToEnd(): Boolean {
+    val lastVisible = layoutInfo.visibleItemsInfo.lastOrNull() ?: return false
+    val totalItemsCount = layoutInfo.totalItemsCount
+    return lastVisible.index >= totalItemsCount - 1
 }
 
 @Preview
