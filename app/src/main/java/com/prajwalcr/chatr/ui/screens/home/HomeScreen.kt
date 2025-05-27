@@ -1,6 +1,5 @@
 package com.prajwalcr.chatr.ui.screens.home
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,11 +25,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -42,9 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.prajwalcr.chatr.ui.BlueBlack
-import com.prajwalcr.chatr.ui.DarkGray29
+import com.prajwalcr.chatr.ui.customDarkGray
 import com.prajwalcr.chatr.ui.navigation.ChatScreenRoute
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
@@ -119,12 +114,13 @@ fun HomeScreen(navController: NavController) {
                         )
                     },
                     colors = TextFieldDefaults.colors().copy(
-                        focusedTextColor = DarkGray29,
-                        unfocusedTextColor = DarkGray29,
-                        focusedContainerColor = DarkGray29,
-                        unfocusedContainerColor = DarkGray29,
+                        focusedTextColor = customDarkGray,
+                        unfocusedTextColor = customDarkGray,
+                        focusedContainerColor = customDarkGray,
+                        unfocusedContainerColor = customDarkGray,
                         focusedPlaceholderColor = Color.Gray,
-                        focusedIndicatorColor = Color.Gray,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
                     ),
                     trailingIcon = {
                         Icon(

@@ -32,6 +32,7 @@ import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,16 +41,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.prajwalcr.chatr.R
 import com.prajwalcr.chatr.ui.BlueBlack
+import com.prajwalcr.chatr.ui.customDarkGray
+import com.prajwalcr.chatr.ui.customPurple
 import com.prajwalcr.chatr.ui.rememberImeState
+import com.prajwalcr.chatr.ui.textMessageColor
 import com.prajwalcr.domain.model.Message
 import com.prajwalcr.domain.model.UserData
 import com.prajwalcr.domain.repository.FirebaseAuthRepository
@@ -62,8 +71,6 @@ import timber.log.Timber
 @Composable
 fun ChatScreen(channelId: String) {
 
-    val currentKeyBoard = LocalSoftwareKeyboardController.current
-
     val messageText = remember {
         mutableStateOf("")
     }
@@ -72,7 +79,7 @@ fun ChatScreen(channelId: String) {
 
     val listState = rememberLazyListState()
 
-    var currentUserData = remember {
+    val currentUserData = remember {
         mutableStateOf<UserData?>(null)
     }
 
@@ -122,40 +129,100 @@ fun ChatScreen(channelId: String) {
             }
         }
 
-        Row(
+        SendMessageTextBox(messageText, chatViewModel, channelId)
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun SendMessageTextBox(
+    messageText: MutableState<String>,
+    chatViewModel: ChatViewModel,
+    channelId: String) {
+    val currentKeyBoard = LocalSoftwareKeyboardController.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = customDarkGray)
+            .size(100.dp)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        TextField(
+            value = messageText.value,
+            placeholder = {
+                Text(
+                    text = "Type your messages...",
+                    color = textMessageColor,
+                    fontStyle = FontStyle.Italic
+                )
+            },
+            onValueChange = { messageText.value = it },
             modifier = Modifier
-                .fillMaxWidth()
-                .background(color = Color.Gray)
-                .padding(8.dp)
-        ) {
-            TextField(
-                value = messageText.value,
-                onValueChange = { messageText.value = it },
-                modifier = Modifier.weight(1f),
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        currentKeyBoard?.hide()
-                    }
-                )
-            )
-            IconButton(
-                onClick = {
-                    if (messageText.value.isNotEmpty()) {
-                        chatViewModel.sendMessage(
-                            channelId,
-                            messageText.value
+                .weight(1f),
+            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    currentKeyBoard?.hide()
+                }
+            ),
+            colors = TextFieldDefaults.colors().copy(
+                focusedTextColor = Color.White,
+                unfocusedTextColor = Color.White,
+                focusedContainerColor = Color.DarkGray,
+                unfocusedContainerColor = Color.DarkGray,
+                focusedPlaceholderColor = Color.Gray,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                cursorColor = customPurple
+            ),
+            shape = RoundedCornerShape(30.dp),
+
+            leadingIcon = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(Modifier.padding(5.dp))
+                    GlideImage(
+                        model =  R.drawable.attachment,
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(5.dp)
+                    )
+                }
+            },
+
+            trailingIcon = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = {
+                            if (messageText.value.isNotEmpty()) {
+                                chatViewModel.sendMessage(
+                                    channelId,
+                                    messageText.value
+                                )
+                                messageText.value = ""
+                            }
+                        },
+                    ) {
+                        GlideImage(
+                            model =  R.drawable.send_icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(5.dp)
                         )
-                        messageText.value = ""
+
+                        Spacer(Modifier.padding(8.dp))
                     }
-                },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Send,
-                    contentDescription = "Send"
-                )
+                    Spacer(Modifier.padding(5.dp))
+                }
             }
-        }
+        )
     }
 }
 
@@ -191,9 +258,9 @@ fun PreviewChatBubble() {
 fun ChatBubble(message: Message, currentUser: UserData) {
     val isCurrentUser = message.senderId == currentUser.userId
     val bubbleColor = if (isCurrentUser) {
-        Color.Green
+        customPurple
     } else {
-        Color.Red
+        customDarkGray
     }
     val arrangement = if (isCurrentUser) {Arrangement.End} else {Arrangement.Start}
 
