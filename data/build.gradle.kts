@@ -4,9 +4,16 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 }
 
+val SUPABASE_URL: String by rootProject.extra
+val SUPABASE_API_KEY: String by rootProject.extra
+
 android {
     namespace = "com.prajwalcr.data"
     compileSdk = 35
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         minSdk = 26
@@ -16,12 +23,20 @@ android {
     }
 
     buildTypes {
+
+        debug {
+            buildConfigField("String", "SUPABASE_URL", SUPABASE_URL)
+            buildConfigField("String", "SUPABASE_API_KEY", SUPABASE_API_KEY)
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "SUPABASE_URL", SUPABASE_URL)
+            buildConfigField("String", "SUPABASE_API_KEY", SUPABASE_API_KEY)
         }
     }
     compileOptions {
@@ -52,5 +67,12 @@ dependencies {
     //firebase
     implementation(libs.firebase.auth)
 
-    //da
+    //supabase
+    implementation(libs.storage.kt)
+    implementation(libs.compose.auth)
+
+    //ktor
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.utils)
 }

@@ -1,6 +1,7 @@
 package com.prajwalcr.chatr.helper
 
 import androidx.lifecycle.LiveData
+import com.prajwalcr.chatr.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

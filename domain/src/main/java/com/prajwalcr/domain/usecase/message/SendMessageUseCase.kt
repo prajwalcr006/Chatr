@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 class SendMessageUseCase(
     private val firebaseDatabaseRepository: FirebaseDatabaseRepository
 ) {
-    suspend operator fun invoke(channelId: String, messageText: String) = withContext(Dispatchers.IO) {
-        firebaseDatabaseRepository.sendMessage(channelId, messageText)
+    suspend operator fun invoke(channelId: String, messageContent: String, isImage: Boolean) = withContext(Dispatchers.IO) {
+        firebaseDatabaseRepository.sendMessage(channelId, messageContent, isImage)
     }
 }

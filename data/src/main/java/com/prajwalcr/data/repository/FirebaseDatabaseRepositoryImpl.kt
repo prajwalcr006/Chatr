@@ -25,6 +25,7 @@ class FirebaseDatabaseRepositoryImpl(
 ): FirebaseDatabaseRepository {
 
     companion object {
+        const val NOT_APPLICABLE = "NA"
         const val UNKNOWN_FIELD = "Unknown"
         const val CHANNEL_PATH = "channel"
         const val MESSAGE_PATH = "messages"
@@ -109,16 +110,17 @@ class FirebaseDatabaseRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun sendMessage(channelId: String, messageText: String) {
+    override suspend fun sendMessage(channelId: String, messageContent: String, isImage:Boolean) {
         val key = getMessagesDatabaseReference()?.push()?.key
         val userData = firebaseAuthRepository.getUserData()
         val message = Message(
             messageId = key ?: UUID.randomUUID().toString(),
-            text = messageText,
+            text = if (!isImage) {messageContent} else NOT_APPLICABLE,
             senderId = userData?.userId ?: UNKNOWN_FIELD,
             senderName = userData?.userName ?: UNKNOWN_FIELD,
             profileUrl = userData?.profileUrl,
-            createdAt = System.currentTimeMillis()
+            createdAt = System.currentTimeMillis(),
+            imageUrl = if (isImage) {messageContent} else null
         )
 
         getMessagesDatabaseReference()?.child(channelId)?.push()?.setValue(message)
